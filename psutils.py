@@ -19,7 +19,16 @@ class storage:
     def __init__(self, **entries):
         self.__dict__.update(entries)
 
+<<<<<<< Updated upstream
 
+=======
+<<<<<<< Updated upstream
+=======
+
+# TODO: why on earth are we making this random pkl function? 
+# oh now i get it 
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 def get_json_pkl(filename):
     f = open(filename,)
     data = json.load(f)
@@ -29,7 +38,7 @@ def get_json_pkl(filename):
         else:
             try:
                 if "j" in data[x][0]:
-                    tmp = [np.complex(y) for y in data[x]]
+                    tmp = [complex(y) for y in data[x]]
                     data[x] = np.array(tmp)
                 else:
                     tmp = data[x]
@@ -66,6 +75,7 @@ def initialize_emt(workingfolder, systemN, N_row, N_col, ts, Tlen, mode='bbd', n
 
 
     filename = os.path.join(workingfolder, 'cases', pfd_name + '.json')
+    print("Loading up pfd", filename)
     pfd = load_pfd(filename)
 
     # load dynamic data in a certain format

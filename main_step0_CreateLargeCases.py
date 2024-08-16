@@ -23,15 +23,27 @@ import json
 # sys_path_PSSE = r"C:\Program Files (x86)\PTI\PSSE34\PSSBIN"
 # os_path_PSSE = r"C:\Program Files (x86)\PTI\PSSE34\PSSBIN"
 
+<<<<<<< Updated upstream
 sys_path_PSSE = r"C:\Program Files (x86)\PTI\PSSE34\PSSPY37"
 sys.path.append(sys_path_PSSE) 
 os_path_PSSE  = r"C:\Program Files (x86)\PTI\PSSE34\PSSPY37"
 os.environ['PATH'] += ';' + os_path_PSSE 
+=======
+# sys_path_PSSE = r"C:\Program Files (x86)\PTI\PSSE34\PSSPY37"
+# sys.path.append(sys_path_PSSE) 
+# os_path_PSSE  = r"C:\Program Files (x86)\PTI\PSSE34\PSSPY37"
+# os.environ['PATH'] += ';' + os_path_PSSE 
+>>>>>>> Stashed changes
 
 import psse34
 import psspy
 
+<<<<<<< Updated upstream
 workingfolder = "C:\\Users\\mxiong3\\Desktop\\ParaEMT_public\\"
+=======
+#workingfolder = "C:\\Users\\mxiong3\\Desktop\\ParaEMT_public\\"
+workingfolder = '/Users/wilsonjusuf/ParaEMT_public'
+>>>>>>> Stashed changes
 os.chdir(workingfolder)
 
 import json
@@ -166,7 +178,11 @@ def main_2():
                 pddd[x] = [str(y) for y in pddd[x]]
             else:
                 pddd[x] = pfd_dict[x].tolist()
+<<<<<<< Updated upstream
     with open(r'C:\Users\mxiong3\Desktop\ParaEMT_public\cases\pfd_' + pfd_name + '.json', 'w') as fp:
+=======
+    with open(f'{workingfolder}/ParaEMT_public/cases/pfd_' + pfd_name + '.json', 'w') as fp:
+>>>>>>> Stashed changes
          json.dump(pddd, fp)
     # with open('pfddebug_{}.json'.format('1234'), 'w') as fp:
     #     json.dump(pddd, fp)
@@ -174,4 +190,8 @@ def main_2():
     # disconnect PSSE license after the use
     psspy.pssehalt_2()
 
+<<<<<<< Updated upstream
 main_2()
+=======
+main_2()
+>>>>>>> Stashed changes

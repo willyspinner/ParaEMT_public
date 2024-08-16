@@ -15,6 +15,7 @@ from functools import reduce
 import pickle
 import pandas as pd
 from lib_numba import *
+import traceback
 
 from partitionutil import form_bbd
 from serial_bbd_matrix import schur_bbd_lu
@@ -1755,7 +1756,7 @@ class EmtSimu():
             ZL_ang = self.x_load_pv_1[i * dyd.load_odr + 1]
             vt_tn = self.x_bus_pv_1[busi_idx * dyd.bus_odr + 3]
 
-            # Stemp = vt_tn * vt_tn / ZL_mag * np.complex(np.cos(ZL_ang), np.sin(ZL_ang))
+            # Stemp = vt_tn * vt_tn / ZL_mag * complex(np.cos(ZL_ang), np.sin(ZL_ang)) 
 
             # check and update Zload (without update, const Z load is used)
             x_load_nx[i * dyd.load_odr + 0] = ZL_mag
@@ -2725,6 +2726,15 @@ class Initialize():
 
 
     def InitNet(self, pfd, ts, loadmodel_option):
+        print("INITTING")
+        #import pdb; pdb.set_trace()
+        print("LEN TING ", pfd.shnt_sw_gb)
+        # WILLYEDIT: before had to do this, now I changed the get_json_pkl function to work
+        # and didn't have to change them here anymore.
+        # pfd.line_RX = np.asarray([complex(a) for a in pfd.line_RX ])
+        # pfd.xfmr_RX = np.asarray([complex(a) for a in pfd.xfmr_RX])
+        # pfd.shnt_sw_gb = np.asarray([complex(a).real for a in pfd.shnt_sw_gb])
+        print("PFDS WS", pfd.ws)
         (self.Init_net_VbaseA,
          self.Init_net_ZbaseA,
          self.Init_net_IbaseA,
@@ -2769,7 +2779,15 @@ class Initialize():
             ts,
             loadmodel_option,
         )
+<<<<<<< Updated upstream
 
+=======
+<<<<<<< Updated upstream
+=======
+            
+
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
         return
 
 
@@ -2983,10 +3001,10 @@ class Initialize():
 
             P = pfd.ibr_MW[i] / dyd.ibr_MVAbase[i]
             Q = pfd.ibr_Mvar[i] / dyd.ibr_MVAbase[i]
-            S = np.complex(P, Q)
+            S = complex(P, Q)
             Vm = pfd.bus_Vm[ibrbus_idx]
             Va = pfd.bus_Va[ibrbus_idx]
-            Vt = np.complex(Vm*math.cos(Va), Vm*math.sin(Va))
+            Vt = complex(Vm*math.cos(Va), Vm*math.sin(Va))
 
             It = np.conj(S/Vt)
 
@@ -3065,10 +3083,10 @@ class Initialize():
 
             P = pfd.ibr_MW[i] / dyd.ibr_MVAbase[i]
             Q = pfd.ibr_Mvar[i] / dyd.ibr_MVAbase[i]
-            S = np.complex(P, Q)
+            S = complex(P, Q)
             Vm = pfd.bus_Vm[ibrbus_idx]
             Va = pfd.bus_Va[ibrbus_idx]
-            Vt = np.complex(Vm * math.cos(Va), Vm * math.sin(Va))
+            Vt = complex(Vm * math.cos(Va), Vm * math.sin(Va))
             It = np.conj(S / Vt)
 
             if abs(dyd.ibr_repca_branch_From_bus[i]) + abs(dyd.ibr_repca_branch_To_bus[i]) == 0:
@@ -3085,9 +3103,9 @@ class Initialize():
                 remote_bus_idx = np.where(pfd.bus_num == dyd.ibr_repca_remote_bus[i])
                 Vm_rem = pfd.bus_Vm[remote_bus_idx]
                 Va_rem = pfd.bus_Va[remote_bus_idx]
-                Vreg = np.complex(Vm_rem * math.cos(Va_rem), Vm_rem * math.sin(Va_rem))
+                Vreg = complex(Vm_rem * math.cos(Va_rem), Vm_rem * math.sin(Va_rem))
 
-            V1_in1 = np.abs(Vreg + np.complex(dyd.ibr_repca_Rc[i], dyd.ibr_repca_Xc[i]) * Ibranch)
+            V1_in1 = np.abs(Vreg + complex(dyd.ibr_repca_Rc[i], dyd.ibr_repca_Xc[i]) * Ibranch)
             V1_in0 = Qbranch * dyd.ibr_repca_Kc[i] + Vm
 
             if dyd.ibr_repca_VCFlag[i] == 0:

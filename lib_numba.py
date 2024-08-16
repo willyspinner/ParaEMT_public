@@ -130,11 +130,17 @@ def numba_InitNet(
     G0_cols = np.zeros(nentries, dtype=np.int64)
     G0_data = np.zeros(nentries, dtype=np.float64)
 
-    for i in range(len(shnt_sw_bus)):
-        j = len(shnt_sw_bus) - i - 1
-        if np.abs(shnt_sw_gb[j])<1e-15:
-            shnt_sw_gb = np.delete(shnt_sw_gb, j)
-            shnt_sw_bus = np.delete(shnt_sw_bus, j)
+    #for i in range(len(shnt_sw_bus)):
+    #    j = len(shnt_sw_bus) - i - 1
+    #    if np.abs(shnt_sw_gb[j])<1e-15:
+    #        shnt_sw_gb = np.delete(shnt_sw_gb, j)
+    #        shnt_sw_bus = np.delete(shnt_sw_bus, j)
+
+    # WILLYEDIt: changing it to more robust logic like the below:
+    remaining_indices = np.nonzero(np.abs(shnt_sw_bus) < 1e-15)[0]
+    #shnt_sw_gb = np.asarray([shnt_sw_gb[len(shnt_sw_bus) -1 -i] for i in remaining_indices ])
+    shnt_sw_gb = shnt_sw_gb[len(shnt_sw_bus) - 1 - remaining_indices]
+    shnt_sw_bus = shnt_sw_bus[remaining_indices]
 
     if loadmodel_option == 1:
         nbranch = 9*len(line_from) + 3*len(xfmr_from) + 3*len(load_bus) + 3*len(shnt_bus) + 3*len(shnt_sw_bus)
@@ -314,6 +320,7 @@ def numba_InitNet(
         Fidx = np.where(bus_num == Frombus)[0][0]
         Tidx = np.where(bus_num == Tobus)[0][0]
         R = np.real(xfmr_RX[i])
+        # TODO: some division by zero here. (Since 316)
 
         L = np.imag(xfmr_RX[i]) / ws
         Rp = damptrap * (20.0 / 3.0 * 2.0 * L / ts)
@@ -351,7 +358,16 @@ def numba_InitNet(
                                                Gv1, R, L, 0.0, iB_temp])
         Init_net_coe0[coe_idx+2,:] = np.array([Fidx + N2, Tidx + N2, Req, icf,
                                                Gv1, R, L, 0.0, iC_temp])
+<<<<<<< Updated upstream
     #### END FOR LOOP ####
+=======
+<<<<<<< Updated upstream
+=======
+
+    #### END FOR LOOP ####
+    # AFTER HERE
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
     #### BEGIN FOR LOOP ####
     # const Z load model
@@ -452,7 +468,15 @@ def numba_InitNet(
         Init_net_coe0[coe_idx+2,:] = np.array([Fidx+N2, -1, Req, icf, Gv1, 0.0, 0.0, C, iC_temp])
     #### END FOR LOOP ####
 
+<<<<<<< Updated upstream
     #### BEGIN FOR LOOP ####
+=======
+<<<<<<< Updated upstream
+=======
+    #### BEGIN FOR LOOP ####
+    # TODO: zero div error is in this for loop here:
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
     # switched shunt model
     for i in range(len(shnt_sw_bus)):
         Frombus = shnt_sw_bus[i]
@@ -461,12 +485,21 @@ def numba_InitNet(
         Y = np.conjugate(- shnt_sw_gb[i]) / basemva / bus_Vm[Fidx] / bus_Vm[Fidx]
 
         C = - np.imag(Y) / ws
-        Rs = 0.15 * ts / 2.0 / C / damptrap
+        # TODO: the following line below is causing zero-division error
+        # TODO: willyeditr
+        if C == 0:
+            print("ERROR: Zero division error while trying to calculate Rs. setting to np.inf")
+            Rs = np.inf
+        else:
+            Rs = 0.15 * ts / 2.0 / C / damptrap
 
-        Req = Rs + ts / 2.0 / C
+        if C == 0:
+            Req = np.inf
+        else:
+            Req = Rs + ts / 2.0 / C
+
         icf = - (ts / 2.0 / C - Rs) / (ts / 2.0 / C + Rs)
         Gv1 = - 1.0 / (ts / 2.0 / C + Rs)
-
         if loadmodel_option == 1:
             idx = 12 * len(line_from) + 12 * len(xfmr_from) + 3 * len(load_bus) + 3 * len(shnt_bus) + 3 * i
         else:
@@ -2023,11 +2056,11 @@ def numba_updateXibr(
         s6_temp = repca_s6_1 + (s5_temp - repca_s6_1) / ibr_repca_Tg[i] * ts
         nx_repca_s6 = s6_temp
 
-        Sbranch = np.complex(repca_LineMW_1, repca_LineMvar_1)
-        Vcom = np.complex(Vm * np.cos(Va), Vm * np.sin(Va))
+        Sbranch = complex(repca_LineMW_1, repca_LineMvar_1)
+        Vcom = complex(Vm * np.cos(Va), Vm * np.sin(Va))
         Ibranch = np.conj(Sbranch / Vcom)
 
-        V1_in1 = np.abs(Vcom - np.complex(ibr_repca_Rc[i], ibr_repca_Xc[i]) * Ibranch)
+        V1_in1 = np.abs(Vcom - complex(ibr_repca_Rc[i], ibr_repca_Xc[i]) * Ibranch)
         V1_in0 = Vm + repca_LineMvar_1 * ibr_repca_Kc[i]
 
         if ibr_repca_VCFlag[i] == 0:
@@ -2083,7 +2116,7 @@ def numba_updateXibr(
 
         nx_repca_LineMW = pe
         nx_repca_LineMvar = qe
-        nx_repca_LineMVA = np.abs(np.complex(pe, qe))
+        nx_repca_LineMVA = np.abs(complex(pe, qe))
 
         # set point for V, Q, Freq and pref
         nx_repca_Vref = repca_Vref_1
