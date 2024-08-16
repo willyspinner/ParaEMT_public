@@ -2677,6 +2677,13 @@ class Initialize():
         self.Init_QL = np.zeros(nload)
 
     def InitNet(self, pfd, ts, loadmodel_option):
+        # TODO: still need to edit some values for line_RX, and stuff
+        #import pdb; pdb.set_trace()
+        # TODO: still needed to do this even after get_json_pkl changes.
+        pfd.line_RX = np.asarray([complex(a) for a in pfd.line_RX])
+        pfd.xfmr_RX = np.asarray([complex(a) for a in pfd.xfmr_RX])
+        pfd.shnt_gb = np.asarray([complex(a) for a in pfd.shnt_gb])
+        pfd.shnt_sw_gb = np.asarray([complex(a) for a in pfd.shnt_sw_gb])
         (self.Init_net_VbaseA,
          self.Init_net_ZbaseA,
          self.Init_net_IbaseA,
